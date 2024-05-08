@@ -4,6 +4,7 @@ import com.tejadvv.springbootthymeleafcrudwebapp.model.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class EmployeeController {
     public String viewHomePage(Model model) {
         return findPaginated(1, "firstName", "asc", model);
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/showNewEmployeeForm")
     public String showNewEmployeeForm(Model model) {
         // create model attribute to bind form data
@@ -28,13 +30,14 @@ public class EmployeeController {
         model.addAttribute("employee", employee);
         return "new_employee";
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/saveEmployee")
     public String saveEmployee(@ModelAttribute("employee") Employee employee) {
         // save employee to database
         employeeService.saveEmployee(employee);
         return "redirect:/";
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/showFormForUpdate/{id}")
     public String showFormForUpdate(@PathVariable(value = "id") long id,Model model){
         //get employee from the service
@@ -43,7 +46,7 @@ public class EmployeeController {
         model.addAttribute("employee", employee);
         return "update_employee";
     }
-
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/deleteEmployee/{id}")
     public String deleteEmployee(@PathVariable(value = "id") long id, Model model){
         // call delete employee method
